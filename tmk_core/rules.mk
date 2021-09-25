@@ -24,11 +24,13 @@ vpath %.cpp $(VPATH_SRC)
 vpath %.cc $(VPATH_SRC)
 vpath %.hpp $(VPATH_SRC)
 vpath %.S $(VPATH_SRC)
+vpath %.rs $(VPATH_SRC)
+
 VPATH :=
 
 # Convert all SRC to OBJ
 define OBJ_FROM_SRC
-$(patsubst %.c,$1/%.o,$(patsubst %.cpp,$1/%.o,$(patsubst %.cc,$1/%.o,$(patsubst %.S,$1/%.o,$(patsubst %.clib,$1/%.a,$($1_SRC))))))
+$(patsubst %.rs,$1/%.o,$(patsubst %.c,$1/%.o,$(patsubst %.cpp,$1/%.o,$(patsubst %.cc,$1/%.o,$(patsubst %.S,$1/%.o,$(patsubst %.clib,$1/%.a,$($1_SRC)))))))
 endef
 $(foreach OUTPUT,$(OUTPUTS),$(eval $(OUTPUT)_OBJ +=$(call OBJ_FROM_SRC,$(OUTPUT))))
 
@@ -247,6 +249,7 @@ GENDEPFLAGS = -MMD -MP -MF $(patsubst %.o,%.td,$@)
 ALL_CFLAGS = $(MCUFLAGS) $(CFLAGS) $(EXTRAFLAGS)
 ALL_CXXFLAGS = $(MCUFLAGS) -x c++ $(CXXFLAGS) $(EXTRAFLAGS)
 ALL_ASFLAGS = $(MCUFLAGS) -x assembler-with-cpp $(ASFLAGS) $(EXTRAFLAGS)
+ALL_RUST_FLAGS = $(RUSTFLAGS) --crate-type staticlib --emit obj --target=avr-unknown-gnu-atmega328 -O
 
 define NO_LTO
 $(patsubst %.a,%.o,$1): NOLTO_CFLAGS += -fno-lto
@@ -344,6 +347,7 @@ BEGIN = gccversion sizebefore
 # Link: create ELF output file from object files.
 .SECONDARY : $(BUILD_DIR)/$(TARGET).elf
 .PRECIOUS : $(OBJ)
+
 # Note the obj.txt depeendency is there to force linking if a source file is deleted
 %.elf: $(OBJ) $(MASTER_OUTPUT)/cflags.txt $(MASTER_OUTPUT)/ldflags.txt $(MASTER_OUTPUT)/obj.txt | $(BEGIN)
 	@$(SILENT) || printf "$(MSG_LINKING) $@" | $(AWK_CMD)
@@ -359,6 +363,7 @@ endif
 $1_CFLAGS = $$(ALL_CFLAGS) $$($1_DEFS) $$($1_INCFLAGS) $$($1_CONFIG_FLAGS) $$(NOLTO_CFLAGS)
 $1_CXXFLAGS = $$(ALL_CXXFLAGS) $$($1_DEFS) $$($1_INCFLAGS) $$($1_CONFIG_FLAGS) $$(NOLTO_CFLAGS)
 $1_ASFLAGS = $$(ALL_ASFLAGS) $$($1_DEFS) $$($1_INCFLAGS) $$($1_CONFIG_FLAGS)
+$1_RUSTFLAGS = $$(ALL_RUST_FLAGS)
 
 # Compile: create object files from C source files.
 $1/%.o : %.c $1/%.d $1/cflags.txt $1/compiler.txt | $(BEGIN)
@@ -396,6 +401,13 @@ $1/%.o : %.S $1/asflags.txt $1/compiler.txt | $(BEGIN)
 	@mkdir -p $$(@D)
 	@$(SILENT) || printf "$$(MSG_ASSEMBLING) $$<" | $$(AWK_CMD)
 	$$(eval CMD=$$(CC) -c $$($1_ASFLAGS) $$< -o $$@)
+	@$$(BUILD_CMD)
+
+# Compile: create object files from rust source files.
+$1/%.o : %.rs
+	@mkdir -p $$(@D)
+	@$$(SILENT) || printf "$$(MSG_COMPILING_RS) $$<" | $$(AWK_CMD)
+	$$(eval CMD=rustc $$($1_RUSTFLAGS) $$< -o $$@)
 	@$$(BUILD_CMD)
 
 $1/%.a : $1/%.o
