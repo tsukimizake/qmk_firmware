@@ -1,6 +1,8 @@
 /*
 Copyright 2019 @foostan
 Copyright 2020 Drashna Jaelre <@drashna>
+Copyright 2021 @tsukimizake
+
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -161,6 +163,7 @@ enum Layer { DVORAK = 0, LOWER, RAISE, ADJUST };
 
 void mydebug(char *s) { snprintf(keylog_str, sizeof(keylog_str), "%s", s); }
 
+// lower/raise only hack is from https://okapies.hateblo.jp/entry/2019/02/02/133953
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     static bool lower_only = false;
     static bool raise_only = false;
