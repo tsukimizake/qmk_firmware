@@ -162,8 +162,8 @@ enum Layer { DVORAK = 0, LOWER, RAISE, ADJUST };
 void mydebug(char *s) { snprintf(keylog_str, sizeof(keylog_str), "%s", s); }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    static bool lower_only = 0;
-    static bool raise_only = 0;
+    static bool lower_only = false;
+    static bool raise_only = false;
     switch (keycode) {
         case MYLOWER:
             if (record->event.pressed) {
