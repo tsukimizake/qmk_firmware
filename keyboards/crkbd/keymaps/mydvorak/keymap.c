@@ -154,11 +154,52 @@ void oled_task_user(void) {
         oled_render_logo();
     }
 }
+enum my_keycodes { L_PIPE = SAFE_RANGE, R_PIPE, L_COMB, R_COMB };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if (record->event.pressed) {
-        set_keylog(keycode, record);
+    switch (keycode) {
+        case L_PIPE:
+
+            if (record->event.pressed) {
+                SEND_STRING("<|");
+                return false;
+            }
+            return true;
+
+            break;
+        case R_PIPE:
+
+            if (record->event.pressed) {
+                SEND_STRING("|>");
+                return false;
+            }
+            return true;
+
+            break;
+        case L_COMB:
+
+            if (record->event.pressed) {
+                SEND_STRING("<<");
+                return false;
+            }
+            return true;
+
+            break;
+        case R_COMB:
+
+            if (record->event.pressed) {
+                SEND_STRING(">>");
+                return false;
+            }
+            return true;
+
+            break;
+
+        default:
+            if (record->event.pressed) {
+                set_keylog(keycode, record);
+            }
+            return true;
     }
-    return true;
 }
 #endif  // OLED_ENABLE
