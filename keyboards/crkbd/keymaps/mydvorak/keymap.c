@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include QMK_KEYBOARD_H
 #include <stdio.h>
 
-enum my_keycodes { L_PIPE = SAFE_RANGE, R_PIPE, L_COMB, R_COMB };
+enum my_keycodes { L_PIPE = SAFE_RANGE, R_PIPE, L_COMB, R_COMB, MYLOWER, MYRAISE };
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -31,7 +31,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
     KC_LSHIFT,KC_SCOLON,   KC_Q,    KC_J,    KC_K,    KC_X,                         KC_B,    KC_M,    KC_W,    KC_V,    KC_Z,  KC_ESC,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                          KC_LALT,   MO(1),  KC_SPC,     KC_ENT,   MO(2), KC_RGUI
+                                          KC_LALT, MYLOWER,  KC_SPC,     KC_ENT, MYRAISE, KC_RGUI
                                       //`--------------------------'  `--------------------------'
 
   ),
@@ -157,7 +157,50 @@ void oled_task_user(void) {
     }
 }
 
+enum Layer { DVORAK = 0, LOWER, RAISE, ADJUST };
+
+void mydebug(char *s) { snprintf(keylog_str, sizeof(keylog_str), "%s", s); }
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    static bool lower_only = 0;
+    static bool raise_only = 0;
+    switch (keycode) {
+        case MYLOWER:
+            if (record->event.pressed) {
+                layer_on(LOWER);
+                set_keylog(keycode, record);
+                lower_only = true;
+            } else {
+                layer_off(LOWER);
+                if (lower_only) {
+                    register_code(KC_LANG2);
+                }
+                lower_only = false;
+                layer_off(LOWER);
+            }
+            update_tri_layer(LOWER, RAISE, ADJUST);
+            return false;
+
+        case MYRAISE:
+            if (record->event.pressed) {
+                layer_on(RAISE);
+                raise_only = true;
+            } else {
+                if (raise_only) {
+                    register_code(KC_LANG1);
+                }
+                raise_only = false;
+                layer_off(RAISE);
+            }
+            update_tri_layer(LOWER, RAISE, ADJUST);
+            return false;
+        default:
+            break;
+    }
+
+    lower_only = false;
+    raise_only = false;
+
     switch (keycode) {
         case L_PIPE:
 
@@ -167,7 +210,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             return true;
 
-            break;
         case R_PIPE:
 
             if (record->event.pressed) {
@@ -176,7 +218,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             return true;
 
-            break;
         case L_COMB:
 
             if (record->event.pressed) {
@@ -185,7 +226,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             return true;
 
-            break;
         case R_COMB:
 
             if (record->event.pressed) {
@@ -194,12 +234,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             return true;
 
-            break;
-
         default:
             if (record->event.pressed) {
                 set_keylog(keycode, record);
             }
+
             return true;
     }
 }
