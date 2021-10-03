@@ -47,7 +47,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       KC_LSFT, XXXXXXX, KC_LBRC, KC_RBRC, KC_LCBR, KC_RCBR,                      KC_QUES,   KC_LT,   KC_GT, XXXXXXX, XXXXXXX,KC_GRAVE,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                          KC_LALT, _______,  KC_SPC,     KC_ENT,   MO(3), KC_RGUI
+                                          KC_LALT, _______,  KC_SPC,     KC_ENT, MYRAISE, KC_LGUI
                                       //`--------------------------'  `--------------------------'
   ),
 
@@ -59,7 +59,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       KC_LSFT, KC_LEFT, KC_DOWN,KC_RIGHT,  L_COMB,  R_COMB,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                          KC_LALT,   MO(3),  KC_SPC,     KC_ENT, _______, KC_RGUI
+                                          KC_LALT, MYLOWER,  KC_SPC,     KC_ENT, _______, KC_LGUI
                                       //`--------------------------'  `--------------------------'
   ),
 
@@ -241,7 +241,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 set_keylog(keycode, record);
             }
-
             return true;
     }
 }
