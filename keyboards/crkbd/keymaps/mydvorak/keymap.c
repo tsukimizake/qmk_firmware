@@ -33,7 +33,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
     KC_LSHIFT,KC_SCOLON,   KC_Q,    KC_J,    KC_K,    KC_X,                         KC_B,    KC_M,    KC_W,    KC_V,    KC_Z,  KC_ESC,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                          KC_LALT, MYLOWER,  KC_SPC,     KC_ENT, MYRAISE, KC_RGUI
+                                          KC_LALT, MYLOWER,  KC_SPC,     KC_ENT, MYRAISE, KC_LGUI
                                       //`--------------------------'  `--------------------------'
 
   ),
@@ -71,7 +71,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       XXXXXXX, KC_HOME, KC_PGDN,  KC_END, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                          KC_LALT, _______,  KC_SPC,     KC_ENT, _______, KC_RGUI
+                                          KC_LALT, _______,  KC_SPC,     KC_ENT, _______, KC_LGUI
                                       //`--------------------------'  `--------------------------'
   )
 };
