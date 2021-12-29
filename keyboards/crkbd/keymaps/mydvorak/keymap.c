@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include QMK_KEYBOARD_H
 #include <stdio.h>
 
-enum my_keycodes { L_PIPE = SAFE_RANGE, R_PIPE, L_COMB, R_COMB, MYLOWER, MYRAISE };
+enum my_keycodes { L_PIPE = SAFE_RANGE, R_PIPE, L_COMB, R_COMB};
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -33,7 +33,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       KC_LSFT,KC_SCOLON,   KC_Q,    KC_J,    KC_K,    KC_X,                         KC_B,    KC_M,    KC_W,    KC_V,    KC_Z,  KC_ESC,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                          KC_LGUI, MYLOWER,  KC_SPC,     KC_ENT, MYRAISE, KC_LALT
+                                          KC_LGUI, MO(1),  KC_SPC,     KC_ENT, MO(2), KC_LALT
                                       //`--------------------------'  `--------------------------'
 
   ),
@@ -47,7 +47,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       KC_LSFT, XXXXXXX, KC_LBRC, KC_RBRC, KC_LCBR, KC_RCBR,                      KC_QUES,   KC_LT,   KC_GT, XXXXXXX, XXXXXXX,KC_GRAVE,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                          KC_LGUI, _______,  KC_SPC,     KC_ENT, MYRAISE, KC_LALT
+                                          KC_LGUI, _______,  KC_SPC,     KC_ENT, MO(3), KC_LALT
                                       //`--------------------------'  `--------------------------'
   ),
 
@@ -59,7 +59,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       KC_LSFT, KC_LEFT, KC_DOWN,KC_RIGHT,  L_COMB,  R_COMB,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                          KC_LGUI, MYLOWER,  KC_SPC,     KC_ENT, _______, KC_LALT
+                                          KC_LGUI, MO(3),    KC_SPC,     KC_ENT, _______, KC_LALT
                                       //`--------------------------'  `--------------------------'
   ),
 
@@ -69,7 +69,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       XXXXXXX, XXXXXXX, KC_PGUP, XXXXXXX, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      XXXXXXX, KC_HOME, KC_PGDN,  KC_END, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+     KC_LANG2, KC_HOME, KC_PGDN,  KC_END, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,KC_LANG1,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                           KC_LGUI, _______,  KC_SPC,     KC_ENT, _______, KC_LALT
                                       //`--------------------------'  `--------------------------'
@@ -82,6 +82,7 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
     if (!is_keyboard_master()) {
         return OLED_ROTATION_180;  // flips the display 180 degrees if offhand
     }
+
     return rotation;
 }
 
@@ -161,57 +162,19 @@ void oled_task_user(void) {
 
 enum Layer { DVORAK = 0, LOWER, RAISE, ADJUST };
 
+
 void mydebug(char *s) { snprintf(keylog_str, sizeof(keylog_str), "%s", s); }
 
 // lower/raise only hack is from https://okapies.hateblo.jp/entry/2019/02/02/133953
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    static bool lower_only = false;
-    static bool raise_only = false;
-    switch (keycode) {
-        case MYLOWER:
-            if (record->event.pressed) {
-                layer_on(LOWER);
-                set_keylog(keycode, record);
-                lower_only = true;
-            } else {
-                layer_off(LOWER);
-                if (lower_only) {
-                    register_code(KC_LANG2);
-                }
-                lower_only = false;
-                layer_off(LOWER);
-            }
-            update_tri_layer(LOWER, RAISE, ADJUST);
-            return false;
-
-        case MYRAISE:
-            if (record->event.pressed) {
-                layer_on(RAISE);
-                raise_only = true;
-            } else {
-                if (raise_only) {
-                    register_code(KC_LANG1);
-                }
-                raise_only = false;
-                layer_off(RAISE);
-            }
-            update_tri_layer(LOWER, RAISE, ADJUST);
-            return false;
-        default:
-            break;
-    }
-
-    lower_only = false;
-    raise_only = false;
 
     switch (keycode) {
         case L_PIPE:
-
             if (record->event.pressed) {
                 SEND_STRING("<|");
                 return false;
             }
-            return true;
+            return false;
 
         case R_PIPE:
 
@@ -219,7 +182,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 SEND_STRING("|>");
                 return false;
             }
-            return true;
+            return false;
 
         case L_COMB:
 
@@ -227,7 +190,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 SEND_STRING("<<");
                 return false;
             }
-            return true;
+            return false;
 
         case R_COMB:
 
@@ -235,7 +198,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 SEND_STRING(">>");
                 return false;
             }
-            return true;
+            return false;
 
         default:
             if (record->event.pressed) {
