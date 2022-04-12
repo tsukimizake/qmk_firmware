@@ -1,4 +1,4 @@
 OLED_ENABLE = no
-JOYSTICX_ENABLE = yes
+JOYSTICK_ENABLE = yes
 JOYSTICK_DRIVER = analog
-
+src += analog.c

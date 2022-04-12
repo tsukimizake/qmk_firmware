@@ -57,11 +57,11 @@ USB_OPT_AUTO_PLL)"
 -DFIXED_CONTROL_ENDPOINT_SIZE=8
 -DFIXED_NUM_CONFIGURATIONS=1
 -DPROTOCOL_LUFA
--DQMK_KEYBOARD="crkbd/rev1"
--DQMK_KEYBOARD_H="crkbd.h"
--DQMK_KEYMAP="mydvorak"
--DQMK_KEYMAP_H="mydvorak.h"
--DQMK_KEYMAP_CONFIG_H="keyboards/crkbd/keymaps/mydvorak/config.h"
+-DQMK_KEYBOARD=\"crkbd/rev1\"
+-DQMK_KEYBOARD_H=\"crkbd.h\"
+-DQMK_KEYMAP=\"mydvorak\"
+-DQMK_KEYMAP_H=\"mydvorak.h\"
+-DQMK_KEYMAP_CONFIG_H=\"keyboards/crkbd/keymaps/mydvorak/config.h\"
 -Ikeyboards/crkbd/keymaps/mydvorak
 -Iusers/mydvorak
 -Ikeyboards/.
@@ -88,18 +88,11 @@ USB_OPT_AUTO_PLL)"
 -Iplatforms/avr/drivers
 -Itmk_core/protocol/lufa
 -Ilib/lufa
--include
-keyboards/crkbd/config.h
--include
-keyboards/crkbd/rev1/config.h
--include
-.build/obj_crkbd_rev1/src/info_config.h
--include
-.build/obj_crkbd_rev1/src/layouts.h
--include
-keyboards/crkbd/keymaps/mydvorak/config.h
--include
-keyboards/crkbd/post_config.h
--include
-quantum/split_common/post_config.h
+-include keyboards/crkbd/config.h
+-include keyboards/crkbd/rev1/config.h
+-include .build/obj_crkbd_rev1/src/info_config.h
+-include .build/obj_crkbd_rev1/src/layouts.h
+-include keyboards/crkbd/keymaps/mydvorak/config.h
+-include keyboards/crkbd/post_config.h
+-include quantum/split_common/post_config.h
 
