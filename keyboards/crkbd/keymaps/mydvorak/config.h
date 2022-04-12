@@ -43,4 +43,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     #define RGBLIGHT_VAL_STEP 17
 #endif
 
-#define OLED_FONT_H "keyboards/crkbd/lib/glcdfont.c"
+#ifdef JOYSTICK_ENABLE
+#define JOYSTICK_AXES_RESOLUTION 8
+#define JOYSTICK_BUTTON_COUNT 0
+#define JOYSTICK_AXES_COUNT 2
+#endif

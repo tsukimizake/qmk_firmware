@@ -20,9 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "keycode.h"
 #include QMK_KEYBOARD_H
+#include "joystick.h"
+#include "analog.h"
 #include <stdio.h>
 
-enum my_keycodes { L_PIPE = SAFE_RANGE, R_PIPE, L_COMB, R_COMB};
+enum my_keycodes { L_PIPE = SAFE_RANGE, R_PIPE, L_COMB, R_COMB };
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -44,9 +46,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
        KC_TAB,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                         KC_6,    KC_7,    KC_8,    KC_9,    KC_0, KC_BSPC,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-     KC_LCTRL, KC_TILD, KC_COMM,  KC_DOT, KC_LPRN, KC_RPRN,                      KC_MINS, KC_PLUS,  KC_EQL, KC_SLSH, KC_PIPE,KC_BSLASH,
+     KC_LCTRL, KC_BTN1, KC_COMM,  KC_DOT, KC_LPRN, KC_RPRN,                      KC_MINS, KC_PLUS,  KC_EQL, KC_SLSH, KC_PIPE,KC_BSLASH,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LSFT, KC_BTN1, KC_LBRC, KC_RBRC, KC_LCBR, KC_RCBR,                      KC_QUES,   KC_LT,   KC_GT, XXXXXXX, XXXXXXX,KC_GRAVE,
+      KC_LSFT, KC_TILD, KC_LBRC, KC_RBRC, KC_LCBR, KC_RCBR,                      KC_QUES,   KC_LT,   KC_GT, XXXXXXX, XXXXXXX,KC_GRAVE,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                           KC_LGUI, XXXXXXX,  KC_SPC,     KC_ENT,   MO(3), KC_LALT
                                       //`--------------------------'  `--------------------------'
@@ -78,6 +80,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 // clang-format on
 
+// joystick config
+joystick_config_t joystick_axes[JOYSTICK_AXES_COUNT] = {[0] = JOYSTICK_AXIS_IN(B4, 900, 575, 285), [1] = JOYSTICK_AXIS_IN(B6, 900, 575, 285)};
+
+void joystick_task() {
+    joystick_status.axes[0] = 128 - analogReadPin(B4) / 4;
+    joystick_status.axes[1] = 128 - analogReadPin(B6) / 4;
+    joystick_status.status |= JS_UPDATED;
+    send_joystick_packet(&joystick_status);
+}
 
 enum Layer { DVORAK = 0, LOWER, RAISE, ADJUST };
 
